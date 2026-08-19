@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mission Control — Ashle</title>
+<style>
+  :root{
+    --bg: #14181C;
+    --card: #1C2228;
+    --card-hi: #232B32;
+    --line: #2C343C;
+    --text: #EDE8DE;
+    --muted: #8B9199;
+    --faint: #5B636B;
+    --goat: #D4A24E;
+    --jackie: #C77B54;
+    --home: #6B8A7A;
+    --legal: #A65D57;
+    --you: #8B7FB0;
+    --good: #7BA88A;
+    --warn: #D4A24E;
+    --urgent: #C0605A;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:60px;
+  }
+  .display{ font-family: Georgia,"Times New Roman",serif; }
+
+  header{ padding:24px 20px 16px; border-bottom:1px solid var(--line); }
+  .eyebrow{ font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); margin-bottom:6px; }
+  h1{ font-size:26px; margin:0 0 4px; font-weight:400; }
+  .sub{ color:var(--muted); font-size:13.5px; }
+
+  /* Tabs */
+  .tabs{
+    display:flex; gap:4px; padding:14px 20px 0;
+    border-bottom:1px solid var(--line);
+    overflow-x:auto;
+  }
+  .tab{
+    padding:10px 14px; font-size:13.5px; color:var(--muted);
+    border-bottom:2px solid transparent; cursor:pointer; white-space:nowrap;
+  }
+  .tab.active{ color:var(--text); border-bottom-color:var(--you); }
+  .view{ display:none; padding:18px 20px; }
+  .view.active{ display:block; }
+
+  /* Stat row */
+  .stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px; }
+  .stat{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; }
+  .stat-num{ font-size:24px; font-family:Georgia,serif; }
+  .stat-label{ font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-top:2px; }
+  .stat.good .stat-num{ color:var(--good); }
+  .stat.warn .stat-num{ color:var(--warn); }
+  .stat.urgent .stat-num{ color:var(--urgent); }
+
+  .section-title{ font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--faint); margin:22px 0 10px; }
+  .section-title:first-child{ margin-top:0; }
+
+  /* Day cards */
+  .day-card{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:10px; }
+  .day-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
+  .day-name{ font-family:Georgia,serif; font-size:15px; }
+  .day-date{ font-size:11px; color:var(--faint); }
+  .evt{ display:flex; gap:10px; padding:6px 0; font-size:13.5px; border-top:1px solid var(--line); }
+  .evt:first-child{ border-top:none; }
+  .evt-time{ color:var(--muted); min-width:64px; font-size:12px; flex-shrink:0; padding-top:1px; }
+  .evt-body{ flex:1; }
+  .evt-title{ line-height:1.3; }
+  .evt-loc{ color:var(--faint); font-size:11.5px; margin-top:2px; }
+  .evt.reset .evt-title{ color:var(--you); }
+  .empty{ color:var(--faint); font-size:13px; font-style:italic; padding:6px 0; }
+
+  /* Inbox view */
+  .inbox-hero{
+    background:linear-gradient(135deg, rgba(212,162,78,.12), rgba(212,162,78,.03));
+    border:1px solid rgba(212,162,78,.28);
+    border-radius:14px; padding:18px; margin-bottom:18px;
+  }
+  .inbox-hero-num{ font-family:Georgia,serif; font-size:34px; color:var(--goat); }
+  .inbox-hero-label{ font-size:13px; color:var(--muted); margin-top:2px; }
+  .breakdown{ display:flex; flex-direction:column; gap:8px; }
+  .bd-row{ display:flex; align-items:center; gap:10px; font-size:13.5px; }
+  .bd-bar-wrap{ flex:1; height:8px; background:var(--card-hi); border-radius:4px; overflow:hidden; }
+  .bd-bar{ height:100%; border-radius:4px; }
+  .bd-count{ font-size:12px; color:var(--muted); min-width:70px; text-align:right; }
+
+  .action-list{ display:flex; flex-direction:column; gap:8px; margin-top:12px;}
+  .action-item{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-size:13.5px; }
+  .action-item .who{ font-weight:600; margin-bottom:2px; }
+  .action-item .what{ color:var(--muted); font-size:12.5px; }
+  .action-item .status{ display:inline-block; margin-top:6px; font-size:11px; padding:2px 8px; border-radius:6px; background:rgba(123,168,138,.15); color:var(--good); }
+
+  /* Lanes (reuse) */
+  .lane{ background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden; margin-bottom:12px; }
+  .lane-head{ display:flex; align-items:center; justify-content:space-between; padding:14px 16px; cursor:pointer; }
+  .lane-head-left{ display:flex; align-items:center; gap:10px; }
+  .lane-bar{ width:4px; height:24px; border-radius:3px; }
+  .lane-name{ font-size:15px; font-weight:600; }
+  .lane-count{ font-size:11.5px; color:var(--muted); }
+  .chevron{ color:var(--faint); font-size:12px; transition:transform .2s; }
+  .lane.open .chevron{ transform:rotate(90deg); }
+  .lane-body{ display:none; padding:0 16px 14px; }
+  .lane.open .lane-body{ display:block; }
+  .task-row{ display:flex; align-items:flex-start; gap:10px; padding:9px 0; border-top:1px solid var(--line); }
+  .task-row:first-child{ border-top:none; }
+  .checkbox{ width:18px; height:18px; border-radius:6px; border:1.5px solid var(--faint); flex-shrink:0; margin-top:1px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:11px; color:transparent; }
+  .checkbox.done{ background:var(--muted); border-color:var(--muted); color:var(--bg); }
+  .task-text{ flex:1; font-size:14px; line-height:1.4; }
+  .task-text.done{ color:var(--faint); text-decoration:line-through; }
+
+  footer{ text-align:center; color:var(--faint); font-size:11px; padding:24px 20px 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Wed Aug 19 · 2:48 PM · Mission Control</div>
+  <h1 class="display">Everything, One Screen</h1>
+  <div class="sub">Real numbers from your inbox &amp; calendar, pulled just now.</div>
+</header>
+
+<div class="tabs">
+  <div class="tab active" data-view="today">Today</div>
+  <div class="tab" data-view="week">This Week</div>
+  <div class="tab" data-view="inbox">Inbox</div>
+  <div class="tab" data-view="lanes">Lanes</div>
+</div>
+
+<!-- TODAY -->
+<div class="view active" id="view-today">
+  <div class="stats">
+    <div class="stat warn"><div class="stat-num">192</div><div class="stat-label">Unread</div></div>
+    <div class="stat good"><div class="stat-num">2</div><div class="stat-label">Drafted</div></div>
+    <div class="stat"><div class="stat-num">3</div><div class="stat-label">Events left today</div></div>
+  </div>
+
+  <div class="section-title">Rest of Today — Wed Aug 19</div>
+  <div class="day-card">
+    <div class="evt"><div class="evt-time">Done</div><div class="evt-body"><div class="evt-title">Jonathan's Court Date — handled ✓</div></div></div>
+    <div class="evt"><div class="evt-time">1:00 PM</div><div class="evt-body"><div class="evt-title">Admin Block (1–3:30pm)</div></div></div>
+  </div>
+
+  <div class="section-title">Just Handled</div>
+  <div class="action-list">
+    <div class="action-item"><div class="who">Preston Adams — Denver Mayor's Office</div><div class="what">CVI tracking spreadsheet feedback, waiting since 7/23</div><span class="status">Reply drafted</span></div>
+    <div class="action-item"><div class="who">Meritza Hengari — Southampton Solent</div><div class="what">Maurice's application follow-up</div><span class="status">Reply drafted</span></div>
+    <div class="action-item"><div class="who">9 marketing emails</div><div class="what">BILL.com, Ooze, Zoom, Sezzle</div><span class="status">Archived</span></div>
+  </div>
+</div>
+
+<!-- WEEK -->
+<div class="view" id="view-week">
+  <div class="day-card">
+    <div class="day-head"><span class="day-name display">Wednesday</span><span class="day-date">Aug 19</span></div>
+    <div class="evt"><div class="evt-time">9:30 AM</div><div class="evt-body"><div class="evt-title">Jonathan's Court Date — handled ✓</div></div></div>
+    <div class="evt"><div class="evt-time">1:00 PM</div><div class="evt-body"><div class="evt-title">Admin Block</div></div></div>
+  </div>
+  <div class="day-card">
+    <div class="day-head"><span class="day-name display">Thursday</span><span class="day-date">Aug 20</span></div>
+    <div class="evt"><div class="evt-time">11:00 AM</div><div class="evt-body"><div class="evt-title">Kalani — Probation Appointment</div></div></div>
+    <div class="evt"><div class="evt-time">1:00 PM</div><div class="evt-body"><div class="evt-title">Admin Block (after probation)</div></div></div>
+  </div>
+  <div class="day-card">
+    <div class="day-head"><span class="day-name display">Friday</span><span class="day-date">Aug 21</span></div>
+    <div class="evt"><div class="evt-time">9:00 AM</div><div class="evt-body"><div class="evt-title">Build Automation System — Focus Block</div><div class="evt-loc">No Meetings Block, 9am–3pm</div></div></div>
+    <div class="evt"><div class="evt-time">10:00 AM</div><div class="evt-body"><div class="evt-title">Stephen — meeting (accepted)</div><div class="evt-loc">Google Meet</div></div></div>
+    <div class="evt"><div class="evt-time">1:00 PM</div><div class="evt-body"><div class="evt-title">KS Therapy Session</div><div class="evt-loc">Grant Street, Therapy Room 1</div></div></div>
+  </div>
+  <div class="day-card">
+    <div class="day-head"><span class="day-name display">Saturday</span><span class="day-date">Aug 22</span></div>
+    <div class="evt"><div class="evt-time">4:00 PM</div><div class="evt-body"><div class="evt-title">Robin's Surprise Party</div></div></div>
+  </div>
+  <div class="day-card">
+    <div class="day-head"><span class="day-name display">Sunday</span><span class="day-date">Aug 23</span></div>
+    <div class="empty">Weekly Review night — open on The Beam</div>
+  </div>
+  <div class="day-card">
+    <div class="day-head"><span class="day-name display">Monday</span><span class="day-date">Aug 24</span></div>
+    <div class="evt reset"><div class="evt-time">5:30 AM</div><div class="evt-body"><div class="evt-title">Me Time — Walk/Meditation Reset</div></div></div>
+    <div class="evt"><div class="evt-time">4:00 PM</div><div class="evt-body"><div class="evt-title">MRT — Kalani</div><div class="evt-loc">303 W Colfax Ave</div></div></div>
+  </div>
+  <div class="day-card">
+    <div class="day-head"><span class="day-name display">Tuesday</span><span class="day-date">Aug 25</span></div>
+    <div class="evt reset"><div class="evt-time">5:30 AM</div><div class="evt-body"><div class="evt-title">Me Time — Walk/Meditation Reset</div></div></div>
+  </div>
+</div>
+
+<!-- INBOX -->
+<div class="view" id="view-inbox">
+  <div class="inbox-hero">
+    <div class="inbox-hero-num">192</div>
+    <div class="inbox-hero-label">unread, down from 201 after today's sweep</div>
+  </div>
+
+  <div class="section-title">What's Actually In There</div>
+  <div class="breakdown">
+    <div class="bd-row"><span style="width:80px">Real people</span><div class="bd-bar-wrap"><div class="bd-bar" style="width:18%; background:var(--goat)"></div></div><span class="bd-count">~35 threads</span></div>
+    <div class="bd-row"><span style="width:80px">Routine/forms</span><div class="bd-bar-wrap"><div class="bd-bar" style="width:15%; background:var(--home)"></div></div><span class="bd-count">~30 threads</span></div>
+    <div class="bd-row"><span style="width:80px">Marketing</span><div class="bd-bar-wrap"><div class="bd-bar" style="width:67%; background:var(--faint)"></div></div><span class="bd-count">~127 threads</span></div>
+  </div>
+
+  <div class="section-title">Handled Just Now</div>
+  <div class="action-list">
+    <div class="action-item"><div class="who">Preston Adams — CVI Spreadsheet</div><div class="what">Draft: asked for 15-min call instead of written notes</div><span class="status">In Drafts</span></div>
+    <div class="action-item"><div class="who">Southampton Solent — Maurice</div><div class="what">Draft: confirming FAFSA follow-up + booking meeting</div><span class="status">In Drafts</span></div>
+  </div>
+
+  <div class="section-title">Still Waiting On You</div>
+  <div class="action-list">
+    <div class="action-item"><div class="who">7 Risk Takers waivers</div><div class="what">JotForm submissions — need filing, not urgent</div></div>
+    <div class="action-item"><div class="who">Keith Hayes — Medicaid training</div><div class="what">Back from his daughter's wedding, wants to connect</div></div>
+    <div class="action-item"><div class="who">Jackie Project — Sign.com amendment</div><div class="what">Fully signed and ready, just needs your eyes</div></div>
+  </div>
+</div>
+
+<!-- LANES -->
+<div class="view" id="view-lanes">
+  <div id="lanes"></div>
+</div>
+
+<footer>built for you, not for anybody watching</footer>
+
+<script>
+const LANES = [
+  { id:'goat', name:'GOAT Camp', hex:'#D4A24E' },
+  { id:'jackie', name:'The Jackie Project', hex:'#C77B54' },
+  { id:'home', name:'Household / Kids', hex:'#6B8A7A' },
+  { id:'legal', name:'Legal / Insurance', hex:'#A65D57' },
+  { id:'you', name:'You', hex:'#8B7FB0' },
+];
+const SEED = {
+  goat: ["Follow up w/ Cameron/Eric/David on banking, accounting, board docs, insurance, program eval","Register in Caring for Denver Grants Portal ahead of Nov CFP","Quincy: merge Risk Takers property into GOAT housing plan","File 7 Risk Takers waivers"],
+  jackie: ["Prep Aug 25 curriculum deliverable / exhibit","Reach out to Sarah — Big Picture Learning intro","Review signed TheBuild Amendment (Sign.com)"],
+  home: ["Book Mo's transportation to Arizona Christian","Robin's surprise party — Sat 8/22, 4pm"],
+  legal: ["DJ's insurance claim — file paperwork"],
+  you: ["Protect 5:30am walk/meditation block — Mon & Tue"]
+};
+let state = {};
+
+async function loadState(){
+  try{ const r = await window.storage.get('beam-state'); state = r && r.value ? JSON.parse(r.value) : null; }catch(e){ state = null; }
+  if(!state){
+    state = {};
+    LANES.forEach(l => { state[l.id] = SEED[l.id].map((t,i)=>({id:l.id+'-'+i+'-'+Date.now(),text:t,done:false})); });
+    await saveState();
+  }
+  renderLanes();
+}
+async function saveState(){ try{ await window.storage.set('beam-state', JSON.stringify(state)); }catch(e){} }
+
+function renderLanes(){
+  const wrap = document.getElementById('lanes');
+  wrap.innerHTML = '';
+  LANES.forEach(l => {
+    const tasks = state[l.id];
+    const openCount = tasks.filter(t=>!t.done).length;
+    const el = document.createElement('div');
+    el.className = 'lane';
+    el.id = 'lane-'+l.id;
+    el.innerHTML = `
+      <div class="lane-head" onclick="toggleLane('${l.id}')">
+        <div class="lane-head-left">
+          <div class="lane-bar" style="background:${l.hex}"></div>
+          <div><div class="lane-name">${l.name}</div><div class="lane-count">${openCount} open</div></div>
+        </div>
+        <div class="chevron">▶</div>
+      </div>
+      <div class="lane-body"><div id="tasks-${l.id}"></div></div>`;
+    wrap.appendChild(el);
+    const listEl = el.querySelector('#tasks-'+l.id);
+    tasks.forEach(t => {
+      const row = document.createElement('div');
+      row.className = 'task-row';
+      row.innerHTML = `<div class="checkbox ${t.done?'done':''}" onclick="toggleTask('${l.id}','${t.id}')">${t.done?'✓':''}</div><div class="task-text ${t.done?'done':''}">${t.text}</div>`;
+      listEl.appendChild(row);
+    });
+  });
+}
+async function toggleTask(laneId, taskId){
+  const t = state[laneId].find(x=>x.id===taskId);
+  if(t){ t.done = !t.done; await saveState(); renderLanes(); document.getElementById('lane-'+laneId).classList.add('open'); }
+}
+function toggleLane(id){ document.getElementById('lane-'+id).classList.toggle('open'); }
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('view-'+tab.dataset.view).classList.add('active');
+  });
+});
+
+loadState();
+</script>
+</body>
+</html>
