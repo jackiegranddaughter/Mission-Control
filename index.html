@@ -383,6 +383,7 @@ function showToast(msg){
 }
 const CELEBRATIONS = ["Nice.","That's one less thing.","Cleared.","You did that.","Good.","Off your plate."];
 
+function renderMood(){
   const wrap = document.getElementById('moodRow');
   wrap.innerHTML = '';
   const today = moodLog[todayKey()];
