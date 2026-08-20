@@ -6,24 +6,19 @@
 <title>Mission Control — Ashle</title>
 <style>
   :root{
-    --bg: #180F0C;
-    --card: #241611;
-    --card-hi: #301E16;
-    --line: #4A3324;
-    --text: #F4E9D8;
-    --muted: #C4A688;
-    --faint: #7A6250;
-    --gold: #CA9A3C;
-    --gold-bright: #E8BC5C;
-    --garnet: #8C2F39;
-    --goat: #CA9A3C;
-    --jackie: #8C2F39;
-    --home: #B0632E;
-    --legal: #6E2530;
-    --you: #D9B872;
-    --good: #8FA66B;
-    --warn: #CA9A3C;
-    --urgent: #A63D3D;
+    --bg: #F7F2EC;
+    --card: #FFFFFF;
+    --card-soft: #FBF6EF;
+    --line: #EAE1D6;
+    --text: #2B2620;
+    --muted: #8A7F6E;
+    --faint: #B5AA98;
+    --rose: #B5495B;
+    --rose-soft: #E8C9CE;
+    --rose-bg: #F7E8EA;
+    --gold: #C99A4A;
+    --sage: #7C9070;
+    --good: #6E9270;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -31,286 +26,228 @@
     background:var(--bg); color:var(--text);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     -webkit-font-smoothing:antialiased;
-    padding-bottom:60px;
+    padding-bottom:50px;
   }
   .display{ font-family: Georgia,"Times New Roman",serif; }
 
-  header{ padding:24px 20px 16px; border-bottom:1px solid var(--line); position:relative; }
-  header::after{ content:""; position:absolute; bottom:-1px; left:20px; width:56px; height:2px; background:linear-gradient(90deg, var(--gold), var(--garnet)); }
-  .eyebrow{ font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); margin-bottom:6px; }
-  h1{ font-size:26px; margin:0 0 4px; font-weight:400; }
-  .sub{ color:var(--muted); font-size:13.5px; }
+  header{ padding:32px 24px 8px; }
+  .eyebrow{ font-size:12px; letter-spacing:.06em; color:var(--muted); margin-bottom:6px; }
+  h1{ font-size:24px; margin:0; font-weight:400; color:var(--text); }
 
-  /* Tabs */
-  .tabs{
-    display:flex; gap:4px; padding:14px 20px 0;
-    border-bottom:1px solid var(--line);
-    overflow-x:auto;
-  }
-  .tab{
-    padding:10px 14px; font-size:13.5px; color:var(--muted);
-    border-bottom:2px solid transparent; cursor:pointer; white-space:nowrap;
-  }
-  .tab.active{ color:var(--gold-bright); border-bottom-color:var(--gold); }
-  .view{ display:none; padding:18px 20px; }
+  /* Nav pills */
+  .nav{ display:flex; gap:8px; padding:20px 24px 4px; }
+  .pill{ padding:8px 16px; border-radius:999px; font-size:13px; color:var(--muted); background:transparent; cursor:pointer; border:1px solid transparent; }
+  .pill.active{ background:var(--card); color:var(--rose); border-color:var(--rose-soft); font-weight:500; }
+
+  .view{ display:none; padding:16px 24px 8px; }
   .view.active{ display:block; }
 
-  /* Stat row */
-  .stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px; }
-  .stat{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; }
-  .stat-num{ font-size:24px; font-family:Georgia,serif; }
-  .stat-label{ font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-top:2px; }
-  .stat.good .stat-num{ color:var(--good); }
-  .stat.warn .stat-num{ color:var(--warn); }
-  .stat.urgent .stat-num{ color:var(--urgent); }
-
-  .section-title{ font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--faint); margin:22px 0 10px; }
-  .section-title:first-child{ margin-top:0; }
-
-  /* Day cards */
-  .day-card{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:10px; }
-  .day-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
-  .day-name{ font-family:Georgia,serif; font-size:15px; }
-  .day-date{ font-size:11px; color:var(--faint); }
-  .evt{ display:flex; gap:10px; padding:6px 0; font-size:13.5px; border-top:1px solid var(--line); }
-  .evt:first-child{ border-top:none; }
-  .evt-time{ color:var(--muted); min-width:64px; font-size:12px; flex-shrink:0; padding-top:1px; }
-  .evt-body{ flex:1; }
-  .evt-title{ line-height:1.3; }
-  .evt-loc{ color:var(--faint); font-size:11.5px; margin-top:2px; }
-  .evt.reset .evt-title{ color:var(--you); }
-  .empty{ color:var(--faint); font-size:13px; font-style:italic; padding:6px 0; }
-
-  /* Inbox view */
-  .inbox-hero{
-    background:linear-gradient(135deg, rgba(202,154,60,.16), rgba(140,47,57,.08));
-    border:1px solid rgba(202,154,60,.32);
-    border-radius:14px; padding:18px; margin-bottom:18px;
+  /* Today hero - the ONE thing */
+  .hero-card{
+    background:var(--card); border-radius:20px; padding:28px 24px;
+    box-shadow:0 1px 3px rgba(43,38,32,0.06);
+    margin-bottom:16px;
   }
-  .inbox-hero-num{ font-family:Georgia,serif; font-size:34px; color:var(--gold-bright); }
-  .inbox-hero-label{ font-size:13px; color:var(--muted); margin-top:2px; }
-  .breakdown{ display:flex; flex-direction:column; gap:8px; }
-  .bd-row{ display:flex; align-items:center; gap:10px; font-size:13.5px; }
-  .bd-bar-wrap{ flex:1; height:8px; background:var(--card-hi); border-radius:4px; overflow:hidden; }
-  .bd-bar{ height:100%; border-radius:4px; }
-  .bd-count{ font-size:12px; color:var(--muted); min-width:70px; text-align:right; }
+  .hero-label{ font-size:12px; color:var(--rose); text-transform:uppercase; letter-spacing:.06em; margin-bottom:10px; }
+  .hero-item{ font-size:19px; font-family:Georgia,serif; line-height:1.4; margin-bottom:4px; }
+  .hero-sub{ font-size:13px; color:var(--muted); }
 
-  .action-list{ display:flex; flex-direction:column; gap:8px; margin-top:12px;}
-  .action-item{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-size:13.5px; }
-  .action-item .who{ font-weight:600; margin-bottom:2px; }
-  .action-item .what{ color:var(--muted); font-size:12.5px; }
-  .action-item .status{ display:inline-block; margin-top:6px; font-size:11px; padding:2px 8px; border-radius:6px; background:rgba(123,168,138,.15); color:var(--good); }
+  .focus-list{ display:flex; flex-direction:column; gap:10px; margin-top:16px; }
+  .focus-row{ display:flex; align-items:flex-start; gap:12px; padding:12px 14px; background:var(--card-soft); border-radius:14px; }
+  .focus-dot{ width:8px; height:8px; border-radius:50%; margin-top:6px; flex-shrink:0; }
+  .focus-text{ font-size:14.5px; line-height:1.4; }
+  .focus-time{ font-size:12px; color:var(--muted); margin-top:2px; }
 
-  /* Lanes (reuse) */
-  .lane{ background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden; margin-bottom:12px; }
-  .lane-head{ display:flex; align-items:center; justify-content:space-between; padding:14px 16px; cursor:pointer; }
-  .lane-head-left{ display:flex; align-items:center; gap:10px; }
-  .lane-bar{ width:4px; height:24px; border-radius:3px; }
-  .lane-name{ font-size:15px; font-weight:600; }
-  .lane-count{ font-size:11.5px; color:var(--muted); }
-  .chevron{ color:var(--faint); font-size:12px; transition:transform .2s; }
-  .lane.open .chevron{ transform:rotate(90deg); }
-  .lane-body{ display:none; padding:0 16px 14px; }
-  .lane.open .lane-body{ display:block; }
-  .task-row{ display:flex; align-items:flex-start; gap:10px; padding:9px 0; border-top:1px solid var(--line); }
+  .whisper{ text-align:center; color:var(--faint); font-size:13px; font-style:italic; margin:28px 0; }
+
+  /* Lane selector - ONE at a time, not all stacked */
+  .lane-select{ display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; margin-bottom:16px; }
+  .lane-chip{ flex-shrink:0; padding:9px 14px; border-radius:999px; font-size:13px; background:var(--card); border:1px solid var(--line); cursor:pointer; display:flex; align-items:center; gap:6px; }
+  .lane-chip.active{ background:var(--rose); color:#fff; border-color:var(--rose); }
+  .lane-dot{ width:6px; height:6px; border-radius:50%; }
+
+  .task-card{ background:var(--card); border-radius:16px; padding:6px 18px; box-shadow:0 1px 3px rgba(43,38,32,0.05); }
+  .task-row{ display:flex; align-items:flex-start; gap:12px; padding:13px 0; border-top:1px solid var(--line); }
   .task-row:first-child{ border-top:none; }
-  .checkbox{ width:18px; height:18px; border-radius:6px; border:1.5px solid var(--faint); flex-shrink:0; margin-top:1px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:11px; color:transparent; }
-  .checkbox.done{ background:var(--muted); border-color:var(--muted); color:var(--bg); }
-  .task-text{ flex:1; font-size:14px; line-height:1.4; }
+  .checkbox{ width:20px; height:20px; border-radius:7px; border:1.5px solid var(--faint); flex-shrink:0; margin-top:1px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:12px; color:transparent; }
+  .checkbox.done{ background:var(--good); border-color:var(--good); color:#fff; }
+  .task-text{ flex:1; font-size:14.5px; line-height:1.45; padding-top:1px; }
   .task-text.done{ color:var(--faint); text-decoration:line-through; }
+  .empty{ color:var(--faint); font-size:13.5px; font-style:italic; padding:20px 0; text-align:center; }
 
-  .notes-card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:14px; }
-  .notes-head{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
-  .notes-bar{ width:4px; height:22px; border-radius:3px; }
-  .notes-name{ font-size:15px; font-weight:600; }
-  .drive-links{ display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
-  .drive-btn{ flex:1; min-width:130px; text-decoration:none; text-align:center; font-size:12.5px; padding:9px 10px; border-radius:8px; border:1px solid var(--line); background:var(--card-hi); color:var(--text); }
-  .drive-btn.primary{ border-color:rgba(202,154,60,.4); color:var(--gold-bright); }
-  .quick-jot{ width:100%; background:var(--card-hi); border:1px solid var(--line); border-radius:8px; padding:10px 12px; color:var(--text); font-size:13.5px; font-family:inherit; resize:vertical; min-height:60px; }
-  .quick-jot::placeholder{ color:var(--faint); }
-  .jot-hint{ font-size:11px; color:var(--faint); margin-top:6px; }
+  .add-row{ display:flex; gap:8px; padding:14px 0 6px; }
+  .add-row input{ flex:1; background:var(--card-soft); border:1px solid var(--line); border-radius:10px; padding:10px 12px; color:var(--text); font-size:14px; }
+  .add-row input::placeholder{ color:var(--faint); }
+  .add-row button{ background:var(--rose); border:none; color:#fff; border-radius:10px; padding:10px 18px; font-size:14px; cursor:pointer; }
 
-  footer{ text-align:center; color:var(--faint); font-size:11px; padding:24px 20px 0; }
+  /* Notes - simple, one folder link, one note box */
+  .notes-simple{ background:var(--card); border-radius:16px; padding:20px; box-shadow:0 1px 3px rgba(43,38,32,0.05); }
+  .drive-btn{ display:block; text-align:center; text-decoration:none; padding:12px; border-radius:12px; background:var(--rose-bg); color:var(--rose); font-size:14px; margin-bottom:10px; }
+  .drive-btn.secondary{ background:var(--card-soft); color:var(--text); }
+  .jot{ width:100%; background:var(--card-soft); border:1px solid var(--line); border-radius:12px; padding:12px 14px; color:var(--text); font-size:14px; font-family:inherit; resize:vertical; min-height:70px; margin-top:6px; }
+
+  .mood-row{ display:flex; gap:8px; margin-top:4px; }
+  .mood-btn{ flex:1; text-align:center; padding:12px 4px; border-radius:12px; background:var(--card-soft); border:1.5px solid transparent; cursor:pointer; font-size:22px; }
+  .mood-btn.selected{ border-color:var(--rose); background:var(--rose-bg); }
+  .mood-label{ font-size:10px; color:var(--muted); display:block; margin-top:4px; }
+
+  .motivation-text{ font-family:Georgia,serif; font-size:15.5px; color:#FFFFFF; line-height:1.5; font-style:italic; }
+
+  .streak-line{ margin-top:12px; font-size:12.5px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+  .streak-fire{ font-size:14px; }
+
+  .wins-card{ background:var(--gold); background:linear-gradient(135deg, #E8C9CE, #F0D9C4); border-radius:16px; padding:16px 20px; margin-bottom:16px; }
+  .wins-num{ font-family:Georgia,serif; font-size:26px; color:#6B3542; }
+  .wins-label{ font-size:12.5px; color:#7A5A48; margin-top:2px; }
+
+  .toast{ position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--rose); color:#fff; padding:10px 18px; border-radius:999px; font-size:13px; opacity:0; transition:all .3s ease; pointer-events:none; z-index:50; }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  .week-strip{ display:flex; justify-content:space-between; padding:0 24px 18px; }
+  .week-day{ text-align:center; flex:1; }
+  .week-day-letter{ font-size:11px; color:var(--muted); margin-bottom:6px; }
+  .week-day-num{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; margin:0 auto; color:var(--text); }
+  .week-day.today .week-day-num{ background:var(--rose); color:#fff; font-weight:600; }
+
+  .mood-ring-card{ background:var(--card); border-radius:20px; padding:20px; margin:0 24px 20px; box-shadow:0 1px 3px rgba(43,38,32,0.06); display:flex; align-items:center; gap:18px; }
+  .ring-wrap{ position:relative; width:72px; height:72px; flex-shrink:0; }
+  .ring-pct{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600; color:var(--rose); }
+  #ringProgress{ transition:stroke-dashoffset .5s ease; }
+  .mood-ring-text{ flex:1; }
+  .mood-word{ font-family:Georgia,serif; font-size:17px; margin:2px 0 8px; }
+  .mood-row{ display:flex; gap:6px; }
+  .mood-btn{ flex:1; text-align:center; padding:8px 2px; border-radius:10px; background:var(--card-soft); border:1.5px solid transparent; cursor:pointer; font-size:17px; }
+  .mood-btn.selected{ border-color:var(--rose); background:var(--rose-bg); }
+
+  .section-label{ font-size:13px; font-weight:600; color:var(--text); padding:0 24px 10px; }
+
+  .habits-row{ display:flex; gap:12px; padding:0 24px 20px; overflow-x:auto; }
+  .habit-card{ flex-shrink:0; width:100px; background:var(--card); border-radius:16px; padding:14px 10px; text-align:center; box-shadow:0 1px 3px rgba(43,38,32,0.05); cursor:pointer; border:1.5px solid transparent; }
+  .habit-card.done{ border-color:var(--sage); background:#F1F5EE; }
+  .habit-icon{ font-size:22px; margin-bottom:6px; }
+  .habit-name{ font-size:11.5px; color:var(--muted); line-height:1.3; }
+  .habit-card.done .habit-name{ color:var(--sage); font-weight:600; }
+
+  .motivation-banner{ margin:0 24px 20px; background:linear-gradient(135deg, #C97B8C, #E0A594); border-radius:18px; padding:20px; }
+  .mb-label{ font-size:11px; color:#FBEEE9; text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px; opacity:0.85; }
+
+  footer{ text-align:center; color:var(--faint); font-size:11px; padding:24px 24px 0; }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="eyebrow">Wed Aug 19 · 2:48 PM · Mission Control</div>
-  <h1 class="display">Everything, One Screen</h1>
-  <div class="sub">Real numbers from your inbox &amp; calendar, pulled just now.</div>
+  <div class="eyebrow">Wednesday, August 19</div>
+  <h1 class="display">Good afternoon, Ashle</h1>
 </header>
 
-<div class="tabs">
-  <div class="tab active" data-view="today">Today</div>
-  <div class="tab" data-view="week">This Week</div>
-  <div class="tab" data-view="inbox">Inbox</div>
-  <div class="tab" data-view="lanes">Lanes</div>
-  <div class="tab" data-view="notes">Notes & Files</div>
+<div class="nav">
+  <div class="pill active" data-view="today">Today</div>
+  <div class="pill" data-view="lanes">Tasks</div>
+  <div class="pill" data-view="notes">Notes</div>
+  <div class="pill" data-view="boys">Boys</div>
 </div>
 
-<!-- TODAY -->
+<!-- TODAY: one focused view, nothing else competing -->
 <div class="view active" id="view-today">
-  <div class="stats">
-    <div class="stat warn"><div class="stat-num">192</div><div class="stat-label">Unread</div></div>
-    <div class="stat good"><div class="stat-num">2</div><div class="stat-label">Drafted</div></div>
-    <div class="stat"><div class="stat-num">3</div><div class="stat-label">Events left today</div></div>
+
+  <div class="week-strip" id="weekStrip"></div>
+
+  <div class="mood-ring-card">
+    <div class="ring-wrap">
+      <svg width="72" height="72" viewBox="0 0 72 72">
+        <circle cx="36" cy="36" r="30" fill="none" stroke="var(--card-soft)" stroke-width="7"/>
+        <circle id="ringProgress" cx="36" cy="36" r="30" fill="none" stroke="var(--rose)" stroke-width="7" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5" transform="rotate(-90 36 36)"/>
+      </svg>
+      <div class="ring-pct" id="ringPct">0%</div>
+    </div>
+    <div class="mood-ring-text">
+      <div class="hero-label">Your mood</div>
+      <div class="mood-word" id="moodWord">Check in below</div>
+      <div class="mood-row" id="moodRow"></div>
+    </div>
   </div>
 
-  <div class="section-title">Rest of Today — Wed Aug 19</div>
-  <div class="day-card">
-    <div class="evt"><div class="evt-time">Done</div><div class="evt-body"><div class="evt-title">Jonathan's Court Date — handled ✓</div></div></div>
-    <div class="evt"><div class="evt-time">1:00 PM</div><div class="evt-body"><div class="evt-title">Admin Block (1–3:30pm)</div></div></div>
+  <div class="section-label">Habits</div>
+  <div class="habits-row" id="habitsRow"></div>
+
+  <div class="section-label">Today's tasks</div>
+  <div class="task-card" id="todayTaskCard"></div>
+
+  <div class="motivation-banner" id="motivationBanner">
+    <div class="mb-label">Daily motivation</div>
+    <div class="motivation-text" id="motivationText"></div>
   </div>
 
-  <div class="section-title">Just Handled</div>
-  <div class="action-list">
-    <div class="action-item"><div class="who">Preston Adams — Denver Mayor's Office</div><div class="what">CVI tracking spreadsheet feedback, waiting since 7/23</div><span class="status">Reply drafted</span></div>
-    <div class="action-item"><div class="who">Meritza Hengari — Southampton Solent</div><div class="what">Maurice's application follow-up</div><span class="status">Reply drafted</span></div>
-    <div class="action-item"><div class="who">9 marketing emails</div><div class="what">BILL.com, Ooze, Zoom, Sezzle</div><span class="status">Archived</span></div>
-  </div>
+  <div class="streak-line" id="streakLine" style="padding:0 24px 4px;"></div>
+  <div class="wins-card" id="winsCard"></div>
 </div>
 
-<!-- WEEK -->
-<div class="view" id="view-week">
-  <div class="day-card">
-    <div class="day-head"><span class="day-name display">Wednesday</span><span class="day-date">Aug 19</span></div>
-    <div class="evt"><div class="evt-time">9:30 AM</div><div class="evt-body"><div class="evt-title">Jonathan's Court Date — handled ✓</div></div></div>
-    <div class="evt"><div class="evt-time">1:00 PM</div><div class="evt-body"><div class="evt-title">Admin Block</div></div></div>
-  </div>
-  <div class="day-card">
-    <div class="day-head"><span class="day-name display">Thursday</span><span class="day-date">Aug 20</span></div>
-    <div class="evt"><div class="evt-time">11:00 AM</div><div class="evt-body"><div class="evt-title">Kalani — Probation Appointment</div></div></div>
-    <div class="evt"><div class="evt-time">1:00 PM</div><div class="evt-body"><div class="evt-title">Admin Block (after probation)</div></div></div>
-  </div>
-  <div class="day-card">
-    <div class="day-head"><span class="day-name display">Friday</span><span class="day-date">Aug 21</span></div>
-    <div class="evt"><div class="evt-time">9:00 AM</div><div class="evt-body"><div class="evt-title">Build Automation System — Focus Block</div><div class="evt-loc">No Meetings Block, 9am–3pm</div></div></div>
-    <div class="evt"><div class="evt-time">10:00 AM</div><div class="evt-body"><div class="evt-title">Stephen — meeting (accepted)</div><div class="evt-loc">Google Meet</div></div></div>
-    <div class="evt"><div class="evt-time">1:00 PM</div><div class="evt-body"><div class="evt-title">KS Therapy Session</div><div class="evt-loc">Grant Street, Therapy Room 1</div></div></div>
-  </div>
-  <div class="day-card">
-    <div class="day-head"><span class="day-name display">Saturday</span><span class="day-date">Aug 22</span></div>
-    <div class="evt"><div class="evt-time">4:00 PM</div><div class="evt-body"><div class="evt-title">Robin's Surprise Party</div></div></div>
-  </div>
-  <div class="day-card">
-    <div class="day-head"><span class="day-name display">Sunday</span><span class="day-date">Aug 23</span></div>
-    <div class="empty">Weekly Review night — open on The Beam</div>
-  </div>
-  <div class="day-card">
-    <div class="day-head"><span class="day-name display">Monday</span><span class="day-date">Aug 24</span></div>
-    <div class="evt reset"><div class="evt-time">5:30 AM</div><div class="evt-body"><div class="evt-title">Me Time — Walk/Meditation Reset</div></div></div>
-    <div class="evt"><div class="evt-time">4:00 PM</div><div class="evt-body"><div class="evt-title">MRT — Kalani</div><div class="evt-loc">303 W Colfax Ave</div></div></div>
-  </div>
-  <div class="day-card">
-    <div class="day-head"><span class="day-name display">Tuesday</span><span class="day-date">Aug 25</span></div>
-    <div class="evt reset"><div class="evt-time">5:30 AM</div><div class="evt-body"><div class="evt-title">Me Time — Walk/Meditation Reset</div></div></div>
-  </div>
-</div>
-
-<!-- INBOX -->
-<div class="view" id="view-inbox">
-  <div class="inbox-hero">
-    <div class="inbox-hero-num">192</div>
-    <div class="inbox-hero-label">unread, down from 201 after today's sweep</div>
-  </div>
-
-  <div class="section-title">What's Actually In There</div>
-  <div class="breakdown">
-    <div class="bd-row"><span style="width:80px">Real people</span><div class="bd-bar-wrap"><div class="bd-bar" style="width:18%; background:var(--goat)"></div></div><span class="bd-count">~35 threads</span></div>
-    <div class="bd-row"><span style="width:80px">Routine/forms</span><div class="bd-bar-wrap"><div class="bd-bar" style="width:15%; background:var(--home)"></div></div><span class="bd-count">~30 threads</span></div>
-    <div class="bd-row"><span style="width:80px">Marketing</span><div class="bd-bar-wrap"><div class="bd-bar" style="width:67%; background:var(--faint)"></div></div><span class="bd-count">~127 threads</span></div>
-  </div>
-
-  <div class="section-title">Handled Just Now</div>
-  <div class="action-list">
-    <div class="action-item"><div class="who">Preston Adams — CVI Spreadsheet</div><div class="what">Draft: asked for 15-min call instead of written notes</div><span class="status">In Drafts</span></div>
-    <div class="action-item"><div class="who">Southampton Solent — Maurice</div><div class="what">Draft: confirming FAFSA follow-up + booking meeting</div><span class="status">In Drafts</span></div>
-  </div>
-
-  <div class="section-title">Still Waiting On You</div>
-  <div class="action-list">
-    <div class="action-item"><div class="who">7 Risk Takers waivers</div><div class="what">JotForm submissions — need filing, not urgent</div></div>
-    <div class="action-item"><div class="who">Keith Hayes — Medicaid training</div><div class="what">Back from his daughter's wedding, wants to connect</div></div>
-    <div class="action-item"><div class="who">Jackie Project — Sign.com amendment</div><div class="what">Fully signed and ready, just needs your eyes</div></div>
-  </div>
-</div>
-
-<!-- LANES -->
+<!-- TASKS: pick ONE lane at a time, never all five open -->
 <div class="view" id="view-lanes">
-  <div id="lanes"></div>
+  <div class="lane-select" id="laneSelect"></div>
+  <div class="task-card" id="taskCard"></div>
+  <div class="add-row">
+    <input type="text" id="taskInput" placeholder="Add something…">
+    <button onclick="addTask()">Add</button>
+  </div>
 </div>
 
-<!-- NOTES & FILES -->
+<!-- NOTES: simple, one lane at a time -->
 <div class="view" id="view-notes">
-  <div class="section-title">Notes & Files — By Lane</div>
-  <div id="notesLanes"></div>
+  <div class="lane-select" id="notesLaneSelect"></div>
+  <div class="notes-simple" id="notesCard"></div>
+</div>
+
+<!-- BOYS: GOAT Camp check-ins, same simple pattern as tasks -->
+<div class="view" id="view-boys">
+  <div class="hero-label" style="padding:0 0 10px;">This week's check-ins</div>
+  <div class="task-card" id="boysCard"></div>
+  <div class="add-row">
+    <input type="text" id="boyInput" placeholder="Add a name or check-in…">
+    <button onclick="addBoy()">Add</button>
+  </div>
 </div>
 
 <footer>built for you, not for anybody watching</footer>
 
+<div class="toast" id="toast"></div>
+
 <script>
 const LANES = [
-  { id:'goat', name:'GOAT Camp', hex:'#D4A24E' },
-  { id:'jackie', name:'The Jackie Project', hex:'#C77B54' },
-  { id:'home', name:'Household / Kids', hex:'#6B8A7A' },
-  { id:'legal', name:'Legal / Insurance', hex:'#A65D57' },
-  { id:'you', name:'You', hex:'#8B7FB0' },
+  { id:'goat', name:'GOAT Camp', hex:'#C99A4A', folder:'https://drive.google.com/drive/folders/110XVLDIWSnECE5fKSSzPOeFkLPBreSZC', notes:'https://docs.google.com/document/d/1aJcXWkioxKHOVeAxi6VwH076P6ccNN_iiG_7qQCx85Q/edit' },
+  { id:'jackie', name:'Jackie Project', hex:'#B5495B', folder:'https://drive.google.com/drive/folders/1hRm3BTs28nH14vEjYFiAikzyLEhqQgt_', notes:'https://docs.google.com/document/d/1vrq-bBXy2eYcA-nuuT8FzPHR3UoCBovJVbod3U3Qso0/edit' },
+  { id:'home', name:'Household', hex:'#7C9070', folder:'https://drive.google.com/drive/folders/1U4K76duYLLWGPPqtbIobcjS6Zv9XSlOR', notes:'https://docs.google.com/document/d/1iAIRpITaTd6aielRQQdfaIBqybjJsy1S80DRIqfNuIQ/edit' },
+  { id:'legal', name:'Legal', hex:'#8A6B7A', folder:'https://drive.google.com/drive/folders/1DDqrNM0MqbUy9PEPzJmYAl2HQohMQ8mc', notes:'https://docs.google.com/document/d/10Xf5t5Sz0imdCw1jODuIvhXubj6Xlg3Nxnv7EeVfzoc/edit' },
+  { id:'you', name:'You', hex:'#D9A544', folder:'https://drive.google.com/drive/folders/1NHV9pnG9SjmyrR8CkU2PPoxis3QCNXId', notes:'https://docs.google.com/document/d/1Hese3Z3NkmbRBlxkrixHXNDPss-2_GW6ItCSSB3Z-v0/edit' },
 ];
 const SEED = {
-  goat: ["Follow up w/ Cameron/Eric/David on banking, accounting, board docs, insurance, program eval","Register in Caring for Denver Grants Portal ahead of Nov CFP","Quincy: merge Risk Takers property into GOAT housing plan","File 7 Risk Takers waivers"],
-  jackie: ["Prep Aug 25 curriculum deliverable / exhibit","Reach out to Sarah — Big Picture Learning intro","Review signed TheBuild Amendment (Sign.com)"],
-  home: ["Book Mo's transportation to Arizona Christian","Robin's surprise party — Sat 8/22, 4pm"],
+  goat: ["Follow up w/ Cameron/Eric/David on banking, accounting, board docs","Register in Caring for Denver Grants Portal","File 7 Risk Takers waivers"],
+  jackie: ["Prep Aug 25 curriculum deliverable","Reach out to Sarah — Big Picture Learning intro"],
+  home: ["Book Mo's transportation to Arizona Christian","Robin's surprise party — Sat 8/22"],
   legal: ["DJ's insurance claim — file paperwork"],
   you: ["Protect 5:30am walk/meditation block — Mon & Tue"]
 };
-const DRIVE_LANES = [
-  { id:'goat', name:'GOAT Camp', hex:'#CA9A3C', folder:'https://drive.google.com/drive/folders/110XVLDIWSnECE5fKSSzPOeFkLPBreSZC', notes:'https://docs.google.com/document/d/1aJcXWkioxKHOVeAxi6VwH076P6ccNN_iiG_7qQCx85Q/edit' },
-  { id:'jackie', name:'The Jackie Project', hex:'#8C2F39', folder:'https://drive.google.com/drive/folders/1hRm3BTs28nH14vEjYFiAikzyLEhqQgt_', notes:'https://docs.google.com/document/d/1vrq-bBXy2eYcA-nuuT8FzPHR3UoCBovJVbod3U3Qso0/edit' },
-  { id:'home', name:'Household / Kids', hex:'#B0632E', folder:'https://drive.google.com/drive/folders/1U4K76duYLLWGPPqtbIobcjS6Zv9XSlOR', notes:'https://docs.google.com/document/d/1iAIRpITaTd6aielRQQdfaIBqybjJsy1S80DRIqfNuIQ/edit' },
-  { id:'legal', name:'Legal / Insurance', hex:'#6E2530', folder:'https://drive.google.com/drive/folders/1DDqrNM0MqbUy9PEPzJmYAl2HQohMQ8mc', notes:'https://docs.google.com/document/d/10Xf5t5Sz0imdCw1jODuIvhXubj6Xlg3Nxnv7EeVfzoc/edit' },
-  { id:'you', name:'You', hex:'#D9B872', folder:'https://drive.google.com/drive/folders/1NHV9pnG9SjmyrR8CkU2PPoxis3QCNXId', notes:'https://docs.google.com/document/d/1Hese3Z3NkmbRBlxkrixHXNDPss-2_GW6ItCSSB3Z-v0/edit' },
+let state = {}, activeLane = 'goat', activeNotesLane = 'goat', jots = {}, moodLog = {}, boys = [];
+
+const MOODS = [
+  {emoji:'😔', label:'Heavy'},
+  {emoji:'😩', label:'Stretched'},
+  {emoji:'😐', label:'Steady'},
+  {emoji:'🙂', label:'Good'},
+  {emoji:'✨', label:'Light'},
 ];
-let jots = {};
-
-async function loadJots(){
-  try{ const r = await window.storage.get('quick-jots'); jots = r && r.value ? JSON.parse(r.value) : {}; }catch(e){ jots = {}; }
-  renderNotesLanes();
-}
-async function saveJot(laneId, val){
-  jots[laneId] = val;
-  try{ await window.storage.set('quick-jots', JSON.stringify(jots)); }catch(e){}
-}
-function renderNotesLanes(){
-  const wrap = document.getElementById('notesLanes');
-  if(!wrap) return;
-  wrap.innerHTML = '';
-  DRIVE_LANES.forEach(l => {
-    const card = document.createElement('div');
-    card.className = 'notes-card';
-    card.innerHTML = `
-      <div class="notes-head">
-        <div class="notes-bar" style="background:${l.hex}"></div>
-        <div class="notes-name">${l.name}</div>
-      </div>
-      <div class="drive-links">
-        <a class="drive-btn primary" href="${l.folder}" target="_blank" rel="noopener">📁 Open Folder (big files)</a>
-        <a class="drive-btn" href="${l.notes}" target="_blank" rel="noopener">📝 Full Meeting Notes</a>
-      </div>
-      <textarea class="quick-jot" id="jot-${l.id}" placeholder="Quick note — jot something fast, move it to the real doc later...">${jots[l.id]||''}</textarea>
-      <div class="jot-hint">Saves right here on this device as you type.</div>
-    `;
-    wrap.appendChild(card);
-    const ta = card.querySelector('#jot-'+l.id);
-    let t;
-    ta.addEventListener('input', () => {
-      clearTimeout(t);
-      t = setTimeout(()=>saveJot(l.id, ta.value), 500);
-    });
-  });
-}
-
-let state = {};
+const MOTIVATIONS = [
+  "You don't have to hold all of it today. Just the next thing.",
+  "Systems carry the weight so you don't have to.",
+  "Small steady steps are still steps. You're moving.",
+  "You built this from nothing but will. That's not small.",
+  "Rest is part of the plan, not a break from it.",
+  "You are allowed to do less than everything today.",
+  "Every lane doesn't need you at once. Pick one."
+];
+function todayKey(){ const d=new Date(); return d.toISOString().slice(0,10); }
+function dayOfYear(){ const d=new Date(); const start=new Date(d.getFullYear(),0,0); return Math.floor((d-start)/86400000); }
 
 async function loadState(){
   try{ const r = await window.storage.get('beam-state'); state = r && r.value ? JSON.parse(r.value) : null; }catch(e){ state = null; }
@@ -319,55 +256,249 @@ async function loadState(){
     LANES.forEach(l => { state[l.id] = SEED[l.id].map((t,i)=>({id:l.id+'-'+i+'-'+Date.now(),text:t,done:false})); });
     await saveState();
   }
-  renderLanes();
+  try{ const r2 = await window.storage.get('quick-jots'); jots = r2 && r2.value ? JSON.parse(r2.value) : {}; }catch(e){ jots = {}; }
+  try{ const r3 = await window.storage.get('mood-log'); moodLog = r3 && r3.value ? JSON.parse(r3.value) : {}; }catch(e){ moodLog = {}; }
+  try{ const r4 = await window.storage.get('boys-checkins'); boys = r4 && r4.value ? JSON.parse(r4.value) : []; }catch(e){ boys = []; }
+  try{ const r5 = await window.storage.get('habit-log'); habitLog = r5 && r5.value ? JSON.parse(r5.value) : {}; }catch(e){ habitLog = {}; }
+  renderWeekStrip(); renderLaneSelect(); renderTasks(); renderNotesLaneSelect(); renderNotes();
+  renderMood(); renderMotivation(); renderBoys(); renderStreak(); renderWins();
+  renderHabits(); renderRing(); renderTodayTasks();
 }
 async function saveState(){ try{ await window.storage.set('beam-state', JSON.stringify(state)); }catch(e){} }
+async function saveJot(id,val){ jots[id]=val; try{ await window.storage.set('quick-jots', JSON.stringify(jots)); }catch(e){} }
+async function saveMood(){ try{ await window.storage.set('mood-log', JSON.stringify(moodLog)); }catch(e){} }
+async function saveBoys(){ try{ await window.storage.set('boys-checkins', JSON.stringify(boys)); }catch(e){} }
 
-function renderLanes(){
-  const wrap = document.getElementById('lanes');
+const HABITS = [
+  {id:'walk', icon:'🚶', name:'Walk / Meditation'},
+  {id:'water', icon:'💧', name:'Drink Water'},
+  {id:'meds', icon:'💊', name:'Meds / Vitamins'},
+  {id:'gratitude', icon:'🙏', name:'One Gratitude'},
+];
+let habitLog = {};
+
+function renderWeekStrip(){
+  const wrap = document.getElementById('weekStrip');
   wrap.innerHTML = '';
-  LANES.forEach(l => {
-    const tasks = state[l.id];
-    const openCount = tasks.filter(t=>!t.done).length;
+  const letters = ['S','M','T','W','T','F','S'];
+  const now = new Date();
+  const startOfWeek = new Date(now); startOfWeek.setDate(now.getDate()-now.getDay());
+  for(let i=0;i<7;i++){
+    const d = new Date(startOfWeek); d.setDate(startOfWeek.getDate()+i);
+    const isToday = d.toDateString()===now.toDateString();
     const el = document.createElement('div');
-    el.className = 'lane';
-    el.id = 'lane-'+l.id;
-    el.innerHTML = `
-      <div class="lane-head" onclick="toggleLane('${l.id}')">
-        <div class="lane-head-left">
-          <div class="lane-bar" style="background:${l.hex}"></div>
-          <div><div class="lane-name">${l.name}</div><div class="lane-count">${openCount} open</div></div>
-        </div>
-        <div class="chevron">▶</div>
-      </div>
-      <div class="lane-body"><div id="tasks-${l.id}"></div></div>`;
+    el.className = 'week-day'+(isToday?' today':'');
+    el.innerHTML = `<div class="week-day-letter">${letters[i]}</div><div class="week-day-num">${d.getDate()}</div>`;
     wrap.appendChild(el);
-    const listEl = el.querySelector('#tasks-'+l.id);
-    tasks.forEach(t => {
-      const row = document.createElement('div');
-      row.className = 'task-row';
-      row.innerHTML = `<div class="checkbox ${t.done?'done':''}" onclick="toggleTask('${l.id}','${t.id}')">${t.done?'✓':''}</div><div class="task-text ${t.done?'done':''}">${t.text}</div>`;
-      listEl.appendChild(row);
-    });
+  }
+}
+
+function renderHabits(){
+  const wrap = document.getElementById('habitsRow');
+  wrap.innerHTML = '';
+  const today = habitLog[todayKey()] || {};
+  HABITS.forEach(h => {
+    const done = !!today[h.id];
+    const card = document.createElement('div');
+    card.className = 'habit-card'+(done?' done':'');
+    card.innerHTML = `<div class="habit-icon">${h.icon}</div><div class="habit-name">${h.name}</div>`;
+    card.onclick = async () => {
+      const t = habitLog[todayKey()] || {};
+      t[h.id] = !t[h.id];
+      habitLog[todayKey()] = t;
+      await saveHabits();
+      renderHabits(); renderRing();
+      if(t[h.id]) showToast(CELEBRATIONS[Math.floor(Math.random()*CELEBRATIONS.length)]);
+    };
+    wrap.appendChild(card);
   });
 }
-async function toggleTask(laneId, taskId){
-  const t = state[laneId].find(x=>x.id===taskId);
-  if(t){ t.done = !t.done; await saveState(); renderLanes(); document.getElementById('lane-'+laneId).classList.add('open'); }
-}
-function toggleLane(id){ document.getElementById('lane-'+id).classList.toggle('open'); }
+async function saveHabits(){ try{ await window.storage.set('habit-log', JSON.stringify(habitLog)); }catch(e){} }
 
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+function renderRing(){
+  const today = habitLog[todayKey()] || {};
+  const habitsDone = HABITS.filter(h=>today[h.id]).length;
+  let taskDone=0, taskTotal=0;
+  LANES.forEach(l => { (state[l.id]||[]).forEach(t=>{ taskTotal++; if(t.done) taskDone++; }); });
+  const totalPossible = HABITS.length + Math.min(taskTotal,5);
+  const totalDone = habitsDone + Math.min(taskDone,5);
+  const pct = totalPossible ? Math.round((totalDone/totalPossible)*100) : 0;
+  const circumference = 188.5;
+  const offset = circumference - (pct/100)*circumference;
+  document.getElementById('ringProgress').setAttribute('stroke-dashoffset', offset);
+  document.getElementById('ringPct').textContent = pct+'%';
+  const moodIdx = moodLog[todayKey()];
+  const words = ['Heavy day','Stretched thin','Steady','Feeling good','Feeling light'];
+  document.getElementById('moodWord').textContent = moodIdx!==undefined ? words[moodIdx] : (pct>=60?'Making moves':'Check in below');
+}
+
+function renderTodayTasks(){
+  const card = document.getElementById('todayTaskCard');
+  let items = [];
+  LANES.forEach(l => { (state[l.id]||[]).forEach(t => { if(!t.done) items.push({...t, laneName:l.name, laneId:l.id, hex:l.hex}); }); });
+  items = items.slice(0,5);
+  if(items.length===0){ card.innerHTML = '<div class="empty">Nothing open — take the win.</div>'; return; }
+  card.innerHTML = '';
+  items.forEach(t => {
+    const row = document.createElement('div');
+    row.className = 'task-row';
+    row.innerHTML = `<div class="checkbox" onclick="toggleTodayTask('${t.laneId}','${t.id}')"></div><div class="task-text">${escapeHtml(t.text)} <span style="font-size:11px;color:${t.hex};margin-left:6px;">${t.laneName}</span></div>`;
+    card.appendChild(row);
+  });
+}
+async function toggleTodayTask(laneId, id){
+  const t = state[laneId].find(x=>x.id===id);
+  if(t){ t.done=true; await saveState(); renderTodayTasks(); renderTasks(); renderLaneSelect(); renderWins(); renderRing(); showToast(CELEBRATIONS[Math.floor(Math.random()*CELEBRATIONS.length)]); }
+}
+
+function renderStreak(){
+  let streak = 0;
+  let d = new Date();
+  while(true){
+    const key = d.toISOString().slice(0,10);
+    if(moodLog[key] !== undefined){ streak++; d.setDate(d.getDate()-1); }
+    else break;
+  }
+  const line = document.getElementById('streakLine');
+  if(streak >= 2){
+    line.innerHTML = `<span class="streak-fire">🔥</span> ${streak} day check-in streak — you're showing up for yourself`;
+  } else if(streak === 1){
+    line.innerHTML = `<span class="streak-fire">🌱</span> Day 1. That's how every streak starts.`;
+  } else {
+    line.innerHTML = `Tap in above — this is just for you.`;
+  }
+}
+function renderWins(){
+  let done = 0, total = 0;
+  LANES.forEach(l => { state[l.id].forEach(t => { total++; if(t.done) done++; }); });
+  const card = document.getElementById('winsCard');
+  card.innerHTML = `<div class="wins-num">${done}</div><div class="wins-label">things you've cleared across every lane — that's real weight off</div>`;
+}
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(()=>t.classList.remove('show'), 1800);
+}
+const CELEBRATIONS = ["Nice.","That's one less thing.","Cleared.","You did that.","Good.","Off your plate."];
+
+  const wrap = document.getElementById('moodRow');
+  wrap.innerHTML = '';
+  const today = moodLog[todayKey()];
+  MOODS.forEach((m,i) => {
+    const btn = document.createElement('div');
+    btn.className = 'mood-btn' + (today===i?' selected':'');
+    btn.innerHTML = `${m.emoji}<span class="mood-label">${m.label}</span>`;
+    btn.onclick = async () => { moodLog[todayKey()]=i; await saveMood(); renderMood(); renderStreak(); renderRing(); showToast("Logged. Thanks for checking in."); };
+    wrap.appendChild(btn);
+  });
+}
+function renderMotivation(){
+  document.getElementById('motivationText').textContent = MOTIVATIONS[dayOfYear() % MOTIVATIONS.length];
+}
+function renderBoys(){
+  const card = document.getElementById('boysCard');
+  if(boys.length===0){ card.innerHTML = '<div class="empty">Add names to start tracking check-ins.</div>'; return; }
+  card.innerHTML = '';
+  boys.forEach(b => {
+    const row = document.createElement('div');
+    row.className = 'task-row';
+    row.innerHTML = `<div class="checkbox ${b.done?'done':''}" onclick="toggleBoy('${b.id}')">${b.done?'✓':''}</div><div class="task-text ${b.done?'done':''}">${escapeHtml(b.text)}</div>`;
+    card.appendChild(row);
+  });
+}
+async function toggleBoy(id){
+  const b = boys.find(x=>x.id===id);
+  if(b){ b.done=!b.done; await saveBoys(); renderBoys(); }
+}
+async function addBoy(){
+  const input = document.getElementById('boyInput');
+  const val = input.value.trim();
+  if(!val) return;
+  boys.push({id:'boy-'+Date.now(), text:val, done:false});
+  input.value='';
+  await saveBoys(); renderBoys();
+}
+document.getElementById('boyInput').addEventListener('keypress', e => { if(e.key==='Enter') addBoy(); });
+
+
+function renderLaneSelect(){
+  const wrap = document.getElementById('laneSelect');
+  wrap.innerHTML = '';
+  LANES.forEach(l => {
+    const open = state[l.id].filter(t=>!t.done).length;
+    const chip = document.createElement('div');
+    chip.className = 'lane-chip' + (l.id===activeLane?' active':'');
+    chip.innerHTML = `<span class="lane-dot" style="background:${l.id===activeLane?'#fff':l.hex}"></span>${l.name} · ${open}`;
+    chip.onclick = () => { activeLane = l.id; renderLaneSelect(); renderTasks(); };
+    wrap.appendChild(chip);
+  });
+}
+function renderTasks(){
+  const card = document.getElementById('taskCard');
+  const tasks = state[activeLane];
+  if(tasks.length===0){ card.innerHTML = '<div class="empty">Nothing here right now.</div>'; return; }
+  card.innerHTML = '';
+  tasks.forEach(t => {
+    const row = document.createElement('div');
+    row.className = 'task-row';
+    row.innerHTML = `<div class="checkbox ${t.done?'done':''}" onclick="toggleTask('${t.id}')">${t.done?'✓':''}</div><div class="task-text ${t.done?'done':''}">${escapeHtml(t.text)}</div>`;
+    card.appendChild(row);
+  });
+}
+function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+async function toggleTask(id){
+  const t = state[activeLane].find(x=>x.id===id);
+  if(t){
+    t.done=!t.done; await saveState(); renderTasks(); renderLaneSelect(); renderWins();
+    if(t.done) showToast(CELEBRATIONS[Math.floor(Math.random()*CELEBRATIONS.length)]);
+  }
+}
+async function addTask(){
+  const input = document.getElementById('taskInput');
+  const val = input.value.trim();
+  if(!val) return;
+  state[activeLane].push({id:activeLane+'-'+Date.now(), text:val, done:false});
+  input.value='';
+  await saveState(); renderTasks(); renderLaneSelect();
+}
+document.getElementById('taskInput').addEventListener('keypress', e => { if(e.key==='Enter') addTask(); });
+
+function renderNotesLaneSelect(){
+  const wrap = document.getElementById('notesLaneSelect');
+  wrap.innerHTML = '';
+  LANES.forEach(l => {
+    const chip = document.createElement('div');
+    chip.className = 'lane-chip' + (l.id===activeNotesLane?' active':'');
+    chip.innerHTML = `<span class="lane-dot" style="background:${l.id===activeNotesLane?'#fff':l.hex}"></span>${l.name}`;
+    chip.onclick = () => { activeNotesLane = l.id; renderNotesLaneSelect(); renderNotes(); };
+    wrap.appendChild(chip);
+  });
+}
+function renderNotes(){
+  const l = LANES.find(x=>x.id===activeNotesLane);
+  const card = document.getElementById('notesCard');
+  card.innerHTML = `
+    <a class="drive-btn" href="${l.folder}" target="_blank" rel="noopener">Open folder for big files</a>
+    <a class="drive-btn secondary" href="${l.notes}" target="_blank" rel="noopener">Open full meeting notes</a>
+    <textarea class="jot" id="jotBox" placeholder="Quick note…">${jots[l.id]||''}</textarea>
+  `;
+  const ta = document.getElementById('jotBox');
+  let t;
+  ta.addEventListener('input', () => { clearTimeout(t); t=setTimeout(()=>saveJot(l.id, ta.value),500); });
+}
+
+document.querySelectorAll('.pill').forEach(p => {
+  p.addEventListener('click', () => {
+    document.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));
     document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById('view-'+tab.dataset.view).classList.add('active');
+    p.classList.add('active');
+    document.getElementById('view-'+p.dataset.view).classList.add('active');
   });
 });
 
 loadState();
-loadJots();
 </script>
 </body>
 </html>
