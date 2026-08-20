@@ -6,21 +6,24 @@
 <title>Mission Control — Ashle</title>
 <style>
   :root{
-    --bg: #14181C;
-    --card: #1C2228;
-    --card-hi: #232B32;
-    --line: #2C343C;
-    --text: #EDE8DE;
-    --muted: #8B9199;
-    --faint: #5B636B;
-    --goat: #D4A24E;
-    --jackie: #C77B54;
-    --home: #6B8A7A;
-    --legal: #A65D57;
-    --you: #8B7FB0;
-    --good: #7BA88A;
-    --warn: #D4A24E;
-    --urgent: #C0605A;
+    --bg: #180F0C;
+    --card: #241611;
+    --card-hi: #301E16;
+    --line: #4A3324;
+    --text: #F4E9D8;
+    --muted: #C4A688;
+    --faint: #7A6250;
+    --gold: #CA9A3C;
+    --gold-bright: #E8BC5C;
+    --garnet: #8C2F39;
+    --goat: #CA9A3C;
+    --jackie: #8C2F39;
+    --home: #B0632E;
+    --legal: #6E2530;
+    --you: #D9B872;
+    --good: #8FA66B;
+    --warn: #CA9A3C;
+    --urgent: #A63D3D;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -32,7 +35,8 @@
   }
   .display{ font-family: Georgia,"Times New Roman",serif; }
 
-  header{ padding:24px 20px 16px; border-bottom:1px solid var(--line); }
+  header{ padding:24px 20px 16px; border-bottom:1px solid var(--line); position:relative; }
+  header::after{ content:""; position:absolute; bottom:-1px; left:20px; width:56px; height:2px; background:linear-gradient(90deg, var(--gold), var(--garnet)); }
   .eyebrow{ font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); margin-bottom:6px; }
   h1{ font-size:26px; margin:0 0 4px; font-weight:400; }
   .sub{ color:var(--muted); font-size:13.5px; }
@@ -47,7 +51,7 @@
     padding:10px 14px; font-size:13.5px; color:var(--muted);
     border-bottom:2px solid transparent; cursor:pointer; white-space:nowrap;
   }
-  .tab.active{ color:var(--text); border-bottom-color:var(--you); }
+  .tab.active{ color:var(--gold-bright); border-bottom-color:var(--gold); }
   .view{ display:none; padding:18px 20px; }
   .view.active{ display:block; }
 
@@ -79,11 +83,11 @@
 
   /* Inbox view */
   .inbox-hero{
-    background:linear-gradient(135deg, rgba(212,162,78,.12), rgba(212,162,78,.03));
-    border:1px solid rgba(212,162,78,.28);
+    background:linear-gradient(135deg, rgba(202,154,60,.16), rgba(140,47,57,.08));
+    border:1px solid rgba(202,154,60,.32);
     border-radius:14px; padding:18px; margin-bottom:18px;
   }
-  .inbox-hero-num{ font-family:Georgia,serif; font-size:34px; color:var(--goat); }
+  .inbox-hero-num{ font-family:Georgia,serif; font-size:34px; color:var(--gold-bright); }
   .inbox-hero-label{ font-size:13px; color:var(--muted); margin-top:2px; }
   .breakdown{ display:flex; flex-direction:column; gap:8px; }
   .bd-row{ display:flex; align-items:center; gap:10px; font-size:13.5px; }
@@ -115,6 +119,17 @@
   .task-text{ flex:1; font-size:14px; line-height:1.4; }
   .task-text.done{ color:var(--faint); text-decoration:line-through; }
 
+  .notes-card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:14px; }
+  .notes-head{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .notes-bar{ width:4px; height:22px; border-radius:3px; }
+  .notes-name{ font-size:15px; font-weight:600; }
+  .drive-links{ display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+  .drive-btn{ flex:1; min-width:130px; text-decoration:none; text-align:center; font-size:12.5px; padding:9px 10px; border-radius:8px; border:1px solid var(--line); background:var(--card-hi); color:var(--text); }
+  .drive-btn.primary{ border-color:rgba(202,154,60,.4); color:var(--gold-bright); }
+  .quick-jot{ width:100%; background:var(--card-hi); border:1px solid var(--line); border-radius:8px; padding:10px 12px; color:var(--text); font-size:13.5px; font-family:inherit; resize:vertical; min-height:60px; }
+  .quick-jot::placeholder{ color:var(--faint); }
+  .jot-hint{ font-size:11px; color:var(--faint); margin-top:6px; }
+
   footer{ text-align:center; color:var(--faint); font-size:11px; padding:24px 20px 0; }
 </style>
 </head>
@@ -131,6 +146,7 @@
   <div class="tab" data-view="week">This Week</div>
   <div class="tab" data-view="inbox">Inbox</div>
   <div class="tab" data-view="lanes">Lanes</div>
+  <div class="tab" data-view="notes">Notes & Files</div>
 </div>
 
 <!-- TODAY -->
@@ -225,6 +241,12 @@
   <div id="lanes"></div>
 </div>
 
+<!-- NOTES & FILES -->
+<div class="view" id="view-notes">
+  <div class="section-title">Notes & Files — By Lane</div>
+  <div id="notesLanes"></div>
+</div>
+
 <footer>built for you, not for anybody watching</footer>
 
 <script>
@@ -242,6 +264,52 @@ const SEED = {
   legal: ["DJ's insurance claim — file paperwork"],
   you: ["Protect 5:30am walk/meditation block — Mon & Tue"]
 };
+const DRIVE_LANES = [
+  { id:'goat', name:'GOAT Camp', hex:'#CA9A3C', folder:'https://drive.google.com/drive/folders/110XVLDIWSnECE5fKSSzPOeFkLPBreSZC', notes:'https://docs.google.com/document/d/1aJcXWkioxKHOVeAxi6VwH076P6ccNN_iiG_7qQCx85Q/edit' },
+  { id:'jackie', name:'The Jackie Project', hex:'#8C2F39', folder:'https://drive.google.com/drive/folders/1hRm3BTs28nH14vEjYFiAikzyLEhqQgt_', notes:'https://docs.google.com/document/d/1vrq-bBXy2eYcA-nuuT8FzPHR3UoCBovJVbod3U3Qso0/edit' },
+  { id:'home', name:'Household / Kids', hex:'#B0632E', folder:'https://drive.google.com/drive/folders/1U4K76duYLLWGPPqtbIobcjS6Zv9XSlOR', notes:'https://docs.google.com/document/d/1iAIRpITaTd6aielRQQdfaIBqybjJsy1S80DRIqfNuIQ/edit' },
+  { id:'legal', name:'Legal / Insurance', hex:'#6E2530', folder:'https://drive.google.com/drive/folders/1DDqrNM0MqbUy9PEPzJmYAl2HQohMQ8mc', notes:'https://docs.google.com/document/d/10Xf5t5Sz0imdCw1jODuIvhXubj6Xlg3Nxnv7EeVfzoc/edit' },
+  { id:'you', name:'You', hex:'#D9B872', folder:'https://drive.google.com/drive/folders/1NHV9pnG9SjmyrR8CkU2PPoxis3QCNXId', notes:'https://docs.google.com/document/d/1Hese3Z3NkmbRBlxkrixHXNDPss-2_GW6ItCSSB3Z-v0/edit' },
+];
+let jots = {};
+
+async function loadJots(){
+  try{ const r = await window.storage.get('quick-jots'); jots = r && r.value ? JSON.parse(r.value) : {}; }catch(e){ jots = {}; }
+  renderNotesLanes();
+}
+async function saveJot(laneId, val){
+  jots[laneId] = val;
+  try{ await window.storage.set('quick-jots', JSON.stringify(jots)); }catch(e){}
+}
+function renderNotesLanes(){
+  const wrap = document.getElementById('notesLanes');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+  DRIVE_LANES.forEach(l => {
+    const card = document.createElement('div');
+    card.className = 'notes-card';
+    card.innerHTML = `
+      <div class="notes-head">
+        <div class="notes-bar" style="background:${l.hex}"></div>
+        <div class="notes-name">${l.name}</div>
+      </div>
+      <div class="drive-links">
+        <a class="drive-btn primary" href="${l.folder}" target="_blank" rel="noopener">📁 Open Folder (big files)</a>
+        <a class="drive-btn" href="${l.notes}" target="_blank" rel="noopener">📝 Full Meeting Notes</a>
+      </div>
+      <textarea class="quick-jot" id="jot-${l.id}" placeholder="Quick note — jot something fast, move it to the real doc later...">${jots[l.id]||''}</textarea>
+      <div class="jot-hint">Saves right here on this device as you type.</div>
+    `;
+    wrap.appendChild(card);
+    const ta = card.querySelector('#jot-'+l.id);
+    let t;
+    ta.addEventListener('input', () => {
+      clearTimeout(t);
+      t = setTimeout(()=>saveJot(l.id, ta.value), 500);
+    });
+  });
+}
+
 let state = {};
 
 async function loadState(){
@@ -299,6 +367,7 @@ document.querySelectorAll('.tab').forEach(tab => {
 });
 
 loadState();
+loadJots();
 </script>
 </body>
 </html>
